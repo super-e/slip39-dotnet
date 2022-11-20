@@ -8,4 +8,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\slip39-dotnet\slip39-dotnet.csproj" />
+  </ItemGroup>
+
 </Project>
