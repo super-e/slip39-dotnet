@@ -1,9 +1,12 @@
-﻿using slip39_dotnet.models;
+﻿///    Copyright (C) 2022  Super-E-  
+
+using slip39_dotnet.models;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
 namespace slip39_dotnet.consoleapp;
 
+ 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 class Program
 {
@@ -12,9 +15,9 @@ class Program
         FiniteFieldElement a = 1;
         FiniteFieldElement b = 2;
         FiniteFieldElement c = 7;
-        FiniteFieldElement fa = 163;
-        FiniteFieldElement fb = 103;
-        FiniteFieldElement fc = 226;
+        FiniteFieldElement fa = 56;
+        FiniteFieldElement fb = 245;
+        FiniteFieldElement fc = 111;
         FiniteFieldElement x = 255;
 
         var d0a = (x - b) / (a - b) * (x - c) / (a - c);
@@ -27,20 +30,20 @@ class Program
         var t = 3;
 
         byte S = 0xa3;
-        List<(FiniteFieldElement x, FiniteFieldElement y)> startingValues = new List<(FiniteFieldElement, FiniteFieldElement)>();
+        List<(FiniteFieldElement x, FiniteFieldElement y)> startingValues = new();
         var rnd = RandomNumberGenerator.Create();
 
         byte[] tempByte = new byte[1];
         for (byte i = 0; i < t - 2; i++)
         {
-
+            rnd.GetBytes(tempByte);
             startingValues.Add((i, tempByte[0]));
         }
 
         startingValues.Add((254, 0));
         startingValues.Add((255, S));
 
-        List<(FiniteFieldElement x, FiniteFieldElement y)> calculatedShares = new List<(FiniteFieldElement x, FiniteFieldElement y)>();
+        List<(FiniteFieldElement x, FiniteFieldElement y)> calculatedShares = new();
 
         for (byte j = (byte)(t - 2); j < N; j++)
         {

@@ -1,4 +1,6 @@
-﻿using System;
+﻿///    Copyright (C) 2022  Super-E-
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +8,7 @@ namespace slip39_dotnet.models
 {
     public struct FiniteFieldElement : IEquatable<FiniteFieldElement>
     {
-        private byte _value; 
+        private readonly byte _value;
         public static int Order => 256;
 
 
@@ -30,12 +32,12 @@ namespace slip39_dotnet.models
         {
             if (b == 0) throw new ArgumentOutOfRangeException("Divisor cannot be 0");
             if (a == 0) return 0;
-            var byteResult = (byte) AntiLogTable283[(((Order - 1) + LogTable283[a._value] - LogTable283[b._value]) % (Order - 1))];
+            var byteResult = (byte)AntiLogTable283[(((Order - 1) + LogTable283[a._value] - LogTable283[b._value]) % (Order - 1))];
             return new FiniteFieldElement(byteResult);
 
         }
 
-        static public bool operator == (FiniteFieldElement a, FiniteFieldElement b)
+        static public bool operator ==(FiniteFieldElement a, FiniteFieldElement b)
         {
             return a._value == b._value;
         }
@@ -577,5 +579,8 @@ namespace slip39_dotnet.models
         {
             return -1939223833 + _value.GetHashCode();
         }
+
+        static public FiniteFieldElement MultiplicationNeutral => new FiniteFieldElement(1);
+        static public FiniteFieldElement AdditionNeutral => new FiniteFieldElement(0);
     }
 }
