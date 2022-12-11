@@ -324,7 +324,7 @@ public class Tests
         if (BitConverter.IsLittleEndian) id = id.Reverse<byte>().ToArray<byte>();
 
         var encrypted = Slip39.Encrypt(sat, 2, id);
-        var decrypted = Slip39.Dencrypt(encrypted, 2, id);
+        var decrypted = Slip39.Decrypt(encrypted, 2, id);
 
 
         Assert.That(decrypted, Is.EqualTo(sat));
@@ -340,7 +340,7 @@ public class Tests
         if (BitConverter.IsLittleEndian) id = id.Reverse<byte>().ToArray<byte>();
 
         var encrypted = Slip39.Encrypt(sat, 2, id, password);
-        var decrypted = Slip39.Dencrypt(encrypted, 2, id, password);
+        var decrypted = Slip39.Decrypt(encrypted, 2, id, password);
 
         Assert.That(decrypted, Is.EqualTo(sat));
     }
@@ -355,7 +355,7 @@ public class Tests
         if (BitConverter.IsLittleEndian) id = id.Reverse<byte>().ToArray<byte>();
 
         var encrypted = Slip39.Encrypt(sat, 2, id, password1);
-        var decrypted = Slip39.Dencrypt(encrypted, 2, id, password2);
+        var decrypted = Slip39.Decrypt(encrypted, 2, id, password2);
 
         Assert.That(decrypted, Is.Not.EqualTo(sat));
     }
@@ -377,11 +377,24 @@ public class Tests
     }
 
     [Test]
-    public void Sandbox()
+    public void DecodedShareContainsSecret()
     {
-        var secret = new ShamirPoint("bb54aac4b89dc868ba37d9cc21b2cece");
+        var secret = new ShamirPoint("861e76c70095d15b2ed3d2cafc4f7bc0");
+        var words = new ShamirShare(12344, 13, 0, 0, 0, 1, 1, secret).ToString();
 
-        var a = new ShamirShare(12344, 0, 0, 0, 0, 0, 0, secret);
-        var b = a.ToString();
+        var calculated = new ShamirShare(words) ;
+        Assert.That(calculated.ShareSecretPoint, Is.EqualTo(secret));
+    }
+
+    [Test]
+    public void VerifyChecksumForSingleShare()
+    {
+        var secret = new ShamirPoint("861e76c70095d15b2ed3d2cafc4f7bc0");
+        var words = new ShamirShare(12344, 13, 0, 0, 0, 1, 1, secret).ToString();
+
+        var calculated = Slip39.RecoverSecret(1, new Dictionary<FiniteFieldElement, ShamirPoint>() { { (new ShamirShare(words))., (new ShamirShare(words)).ShareSecretPoint } });
+ 
+
+        Assert.That(calculated, Is.EqualTo(secret));
     }
 }

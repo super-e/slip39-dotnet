@@ -131,7 +131,7 @@ namespace slip39_dotnet
             return new ShamirPoint(right.Append(left));
         }
 
-        public static ShamirPoint Dencrypt(ShamirPoint encryptedMasterSecret, byte e, byte[] id, string P = "")
+        public static ShamirPoint Decrypt(ShamirPoint encryptedMasterSecret, byte e, byte[] id, string P = "")
         {
             if (encryptedMasterSecret is null) throw new ArgumentNullException(nameof(encryptedMasterSecret), $"{encryptedMasterSecret} parameter cannot be null");
             if (e > maxIterations) throw new ArgumentException(nameof(e), $"{nameof(e)} parameter should be at most {maxIterations}, instead has {e}");

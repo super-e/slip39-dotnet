@@ -8,7 +8,7 @@ namespace slip39_dotnet.helpers
 {
     public static class BitArrayOperations
     {
-        static public BitArray ConvertFromInt(int input, byte bitLength)
+        static public BitArray ConvertFromInt(long input, byte bitLength)
         {
             if (input < 0 || input >= 1 << bitLength) throw new ArgumentOutOfRangeException(nameof(input), $"{nameof(input)} parameter should be between 0 and {1 << bitLength} for this value of {nameof(bitLength)} ({bitLength})");
             var result = new BitArray(BitConverter.GetBytes(input));
@@ -26,6 +26,19 @@ namespace slip39_dotnet.helpers
             result.Length = outputBitLength;
             if (BitConverter.IsLittleEndian) result.Reverse();
             return result;
+        }
+
+        static public ShamirPoint GetValueRemovingPadding(BitArray input)
+        {
+            var inputBitLength = input.Length;
+            var outputBitLength = inputBitLength - (inputBitLength % 8);
+            input.Reverse();
+            var b = new BitArray(outputBitLength);
+            for(int i = 0; i< outputBitLength; i++)
+            {
+                b[i] = input[i]; 
+            }
+            return new ShamirPoint(b.ConvertToByteArray());
         }
 
         static public int getIntFromBitArray(BitArray bitArray)

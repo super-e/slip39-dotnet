@@ -23,6 +23,19 @@ namespace slip39_dotnet.helpers
             return target;
         }
 
+        public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int n)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (n > source.Count())
+                throw new ArgumentOutOfRangeException(nameof(n), "Can't be bigger than the list");
+            if (n < 0)
+                throw new ArgumentOutOfRangeException(nameof(n), "Can't be negative");
+             
+            var target = source.Reverse().Take(n).Reverse().ToList();
+            return target;
+        }
+
 
         // Returns a new dictionary of this ... others merged leftward.
         // Keeps the type of 'this', which must be default-instantiable.
@@ -125,9 +138,36 @@ namespace slip39_dotnet.helpers
             }
             foreach(var element in result)
             {
+                if (BitConverter.IsLittleEndian) element.Reverse();
                 yield return getIntFromBitArray(element);
             }
             
+        }
+
+        public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> source, int chunksize)
+        {
+            if (chunksize <= 0) throw new ArgumentOutOfRangeException(nameof(chunksize), $"{nameof(chunksize)} variable is {chunksize} but should be greater than 0");
+            source = source.ToArray<T>();
+            while (source.Any())
+            {
+                yield return source.Take(chunksize);
+                source = source.Skip(chunksize);
+            }
+        }
+
+        public static IEnumerable<bool> ToEnumerable(this BitArray array)
+        {
+            foreach(var b in array)
+            {
+                yield return (bool) b;
+            }
+        }
+
+        public static byte[] ConvertToByteArray(this BitArray bitArray)
+        {
+            byte[] bytes = new byte[(int)Math.Ceiling(bitArray.Count / 8.0)];
+            bitArray.CopyTo(bytes, 0);
+            return bytes;
         }
     }
 }
